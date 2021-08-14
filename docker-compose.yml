@@ -1,0 +1,57 @@
+version: '3.9'
+services: 
+  jenkins_ci:
+    container_name: myjenkins_ci
+    image: jenkins/jenkins:lts-jdk11
+    hostname: jenkins
+    ports: 
+      - "8080:8080"
+    volumes: 
+      - /home/maikolweb/ci-devops:/var/jenkins_home
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4000M
+    networks:
+      default:
+        ipv4_address: 10.130.2.201
+  nexus:
+    container_name: nexus_ci
+    image: sonatype/nexus3
+    hostname: nexus
+    ports: 
+      - "8081:8081"
+    volumes: 
+      - /home/maikolweb/data-storage/nexus-data:/nexus-data
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4000M
+    networks: 
+      default:
+        ipv4_address: 10.130.2.30
+
+  sonarqube:
+      container_name: sonarqube_ci
+      image: sonarqube
+      hostname: sonarqube
+      ports: 
+        - "9000:9000"
+      volumes: 
+        - /home/maikolweb/data-storage/sonarqube/data:/opt/sonarqube/data
+        - /home/maikolweb/data-storage/sonarqube/logs:/opt/sonarqube/logs
+        - /home/maikolweb/data-storage/sonarqube/extensions:/opt/sonarqube/extensions
+      deploy:
+        resources:
+          limits:
+            cpus: '2.0'
+            memory: 4000M
+      networks: 
+        default:
+          ipv4_address: 10.130.2.40
+networks:
+  default:
+    external: true  
+    name: red1
